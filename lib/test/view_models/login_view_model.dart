@@ -1,0 +1,35 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+class LoginViewModel extends ChangeNotifier{
+
+  String message = "";
+
+  Future<bool> login(String email, String password) async{
+
+    bool isLoggedIn = false;
+
+print ("email = " + email);
+print ("password = " + password);
+    try{
+      
+      final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      isLoggedIn = userCredential != null;
+
+    }on FirebaseAuthException catch(e){
+            print(e);
+
+      if(e.code == "user-not-found" ){
+        message = "User is not registered!";
+      }
+      //message = e.code;
+      notifyListeners();
+    }catch(e){
+      print(e);
+    }
+
+    return isLoggedIn;
+  }
+
+
+}
